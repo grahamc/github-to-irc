@@ -48,6 +48,11 @@ github_queue.subscribe(block: true) do |delivery_info, metadata, payload|
 	# Assuming the routing key to stay `event_type.owner/repo`.
 	type, repository = delivery_info[:routing_key].split(".")
 	data = JSON.parse(payload)
+
+        if data['repository']['private']
+          next
+        end
+
 	reply = GithubWebhook.handle(data, type: type)
 
 	# Find the repository's channels...
